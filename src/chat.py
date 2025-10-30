@@ -1,4 +1,4 @@
-from src.search import search_prompt
+from search import search_prompt
 
 
 def main():

@@ -1,7 +1,7 @@
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_postgres import PGVector
 
-from src import config
+import config
 
 
 PROMPT_TEMPLATE = """

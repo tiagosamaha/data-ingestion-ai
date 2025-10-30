@@ -29,5 +29,25 @@ services:
       -c "CREATE EXTENSION IF NOT EXISTS vector;"
     restart: "no"
 
+  chat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - rag_chat:latest
+    container_name: rag_chat
+    depends_on:
+      postgres:
+        condition: service_healthy
+      bootstrap_vector_ext:
+        condition: service_completed_successfully
+    environment:
+      PDF_PATH: ${PDF_PATH:-./document.pdf}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/rag}
+      PG_VECTOR_COLLECTION_NAME: ${PG_VECTOR_COLLECTION_NAME:-embeddings}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    stdin_open: true
+    tty: true
+
 volumes:
   postgres_data:
