@@ -1,5 +1,5 @@
 import logging
-import os
+from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -48,7 +48,7 @@ def check_if_processed(embeddings, pdf_path):
 
 
 def load_pdf_documents(pdf_path):
-    if not os.path.exists(pdf_path):
+    if not Path(pdf_path).exists():
         raise FileNotFoundError(f"PDF não encontrado: {pdf_path}")
 
     logger.info(f"Carregando PDF: {pdf_path}")
