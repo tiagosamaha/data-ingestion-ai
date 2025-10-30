@@ -1,4 +1,4 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, GoogleGenerativeAI
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_postgres import PGVector
 
 from src import config
@@ -33,10 +33,7 @@ RESPONDA A "PERGUNTA DO USUÁRIO"
 
 
 def search_prompt(question: str) -> str:
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model=config.GOOGLE_EMBEDDING_MODEL,
-        google_api_key=config.GOOGLE_API_KEY,
-    )
+    embeddings = OpenAIEmbeddings(model=config.OPENAI_EMBEDDING_MODEL, api_key=config.OPENAI_API_KEY)
 
     vector_store = PGVector(
         embeddings=embeddings,
@@ -62,12 +59,12 @@ def search_prompt(question: str) -> str:
 
     prompt = PROMPT_TEMPLATE.format(contexto=context, pergunta=question)
 
-    llm = GoogleGenerativeAI(
-        model=config.GOOGLE_LLM_MODEL,
-        google_api_key=config.GOOGLE_API_KEY,
+    llm = ChatOpenAI(
+        model=config.OPENAI_LLM_MODEL,
         temperature=config.LLM_TEMPERATURE,
+        api_key=config.OPENAI_API_KEY,
     )
 
     response = llm.invoke(prompt)
 
-    return response
+    return response.content

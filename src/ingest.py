@@ -3,7 +3,7 @@ from pathlib import Path
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
 
 import config
@@ -14,10 +14,7 @@ logger = logging.getLogger(__name__)
 
 def create_embeddings_model():
     logger.info("Inicializando modelo de embeddings...")
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model=config.GOOGLE_EMBEDDING_MODEL,
-        google_api_key=config.GOOGLE_API_KEY,
-    )
+    embeddings = OpenAIEmbeddings(model=config.OPENAI_EMBEDDING_MODEL, api_key=config.OPENAI_API_KEY)
     return embeddings
 
 
