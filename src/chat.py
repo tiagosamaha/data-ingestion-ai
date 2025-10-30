@@ -1,5 +1,6 @@
 from search import search_prompt
 
+
 def main():
     chain = search_prompt()
 
@@ -8,6 +9,7 @@ def main():
         return
     
     pass
+
 
 if __name__ == "__main__":
     main()
