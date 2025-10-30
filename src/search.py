@@ -1,3 +1,9 @@
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, GoogleGenerativeAI
+from langchain_postgres import PGVector
+
+from src import config
+
+
 PROMPT_TEMPLATE = """
 CONTEXTO:
 {contexto}
@@ -26,5 +32,42 @@ RESPONDA A "PERGUNTA DO USUÁRIO"
 """
 
 
-def search_prompt(question=None):
-    pass
+def search_prompt(question: str) -> str:
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model=config.GOOGLE_EMBEDDING_MODEL,
+        google_api_key=config.GOOGLE_API_KEY,
+    )
+
+    vector_store = PGVector(
+        embeddings=embeddings,
+        collection_name=config.PG_VECTOR_COLLECTION_NAME,
+        connection=config.DATABASE_URL,
+        use_jsonb=True,
+    )
+
+    documents_with_scores = vector_store.similarity_search_with_score(
+        question, k=config.K_RETRIEVAL_RESULTS
+    )
+
+    filtered_documents = [
+        (doc, score)
+        for doc, score in documents_with_scores
+        if score <= config.SIMILARITY_SCORE_THRESHOLD
+    ]
+
+    if not filtered_documents:
+        return "Não tenho informações necessárias para responder sua pergunta."
+
+    context = "\n".join([doc.page_content for doc, score in filtered_documents])
+
+    prompt = PROMPT_TEMPLATE.format(contexto=context, pergunta=question)
+
+    llm = GoogleGenerativeAI(
+        model=config.GOOGLE_LLM_MODEL,
+        google_api_key=config.GOOGLE_API_KEY,
+        temperature=config.LLM_TEMPERATURE,
+    )
+
+    response = llm.invoke(prompt)
+
+    return response
