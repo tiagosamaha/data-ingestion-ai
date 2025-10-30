@@ -36,7 +36,7 @@ OPENAI_API_KEY=sua-chave-openai-aqui
 
 ### Passo 1: Fazer Ingestão do PDF
 
-Coloque seu arquivo PDF no diretório do projeto e configure o caminho no `.env`. Em seguida, execute:
+O arquivo PDF já está no diretório do projeto (na imagem docker). Execute o comando para realizar a ingestão:
 
 ```bash
 docker-compose run --rm --entrypoint python chat src/ingest.py
